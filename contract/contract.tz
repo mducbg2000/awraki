@@ -1,0 +1,24 @@
+parameter (pair %signing (bytes %content) (pair (key %publicKey) (bytes %signature)));
+storage   (set (pair (pair (bytes %content) (bytes %signature)) (pair (address %signerAddress) (key %signerPubKey))));
+code
+  {
+    UNPAIR;     # @parameter : @storage
+    SWAP;       # @storage : @parameter
+    # == signing ==
+    # self.data.add(sp.record(content = params.content, signature = params.signature, signerAddress = sp.sender, signerPubKey = params.publicKey)) # @storage : @parameter
+    PUSH bool True; # bool : @storage : @parameter
+    DUP 3;      # @parameter : bool : @storage : @parameter
+    GET 3;      # key : bool : @storage : @parameter
+    SENDER;     # @sender : key : bool : @storage : @parameter
+    PAIR;       # pair @sender key : bool : @storage : @parameter
+    DIG 3;      # @parameter : pair @sender key : bool : @storage
+    DUP;        # @parameter : @parameter : pair @sender key : bool : @storage
+    GET 4;      # bytes : @parameter : pair @sender key : bool : @storage
+    SWAP;       # @parameter : bytes : pair @sender key : bool : @storage
+    CAR;        # bytes : bytes : pair @sender key : bool : @storage
+    PAIR;       # pair bytes bytes : pair @sender key : bool : @storage
+    PAIR;       # pair (pair bytes bytes) (pair @sender key) : bool : @storage
+    UPDATE;     # set (pair (pair bytes bytes) (pair address key))
+    NIL operation; # list operation : set (pair (pair bytes bytes) (pair address key))
+    PAIR;       # pair (list operation) (set (pair (pair bytes bytes) (pair address key)))
+  };

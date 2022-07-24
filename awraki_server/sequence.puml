@@ -1,0 +1,16 @@
+@startuml flow 
+actor User 
+boundary Flutter
+control NestJS
+database MongoDB
+collections Tezos
+
+User -> Flutter: Pick a file
+User -> Flutter: Choose signers
+Flutter -> Flutter: Compute signature
+Flutter -> Tezos: Call contract
+Flutter -> NestJS: Send sign request
+NestJS -> MongoDB: Store file's content
+
+@enduml
+
